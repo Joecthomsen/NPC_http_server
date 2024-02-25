@@ -45,27 +45,27 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-// connect("mongodb://npc_root:ImASillyPassword!@localhost:27017/NPC_Database", {
-//   authSource: "admin",
-// })
-//   .then(() => {
-//     console.log("Connected to MongoDB");
-//   })
-//   .catch((err) => {
-//     console.error("Error connecting to MongoDB: ", err.message);
-//   });
-
-connect(
-  `mongodb://npc_root:ImASillyPassword!@${process.env.DB_HOST}:27017/NPC_Database`,
-  {
-    authSource: "admin",
-  }
-)
+connect("mongodb://npc_root:ImASillyPassword!@localhost:27017/NPC_Database", {
+  authSource: "admin",
+})
   .then(() => {
     console.log("Connected to MongoDB");
   })
   .catch((err) => {
     console.error("Error connecting to MongoDB: ", err.message);
   });
+
+// connect(
+//   `mongodb://npc_root:ImASillyPassword!@${process.env.DB_HOST}:27017/NPC_Database`,
+//   {
+//     authSource: "admin",
+//   }
+// )
+//   .then(() => {
+//     console.log("Connected to MongoDB");
+//   })
+//   .catch((err) => {
+//     console.error("Error connecting to MongoDB: ", err.message);
+//   });
 
 module.exports = app;
