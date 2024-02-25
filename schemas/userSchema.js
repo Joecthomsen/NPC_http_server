@@ -6,7 +6,8 @@ const userSchema = new Schema(
     {
         email: {
             type: String,
-            required: true
+            required: true,
+            unique: true
         },
         name: {
             type: String,
@@ -20,7 +21,8 @@ const userSchema = new Schema(
             type: String
         },
         controleGear:{
-            type: [Schema.Types.ObjectId],
+            type: [String],
+            index: true,
             default: []
         }
     },
@@ -29,5 +31,9 @@ const userSchema = new Schema(
     }
 )
 
+// Define index on email field
+userSchema.index({ email: 1 });
+
 const User = mongoose.model('userSchema', userSchema)
+
 module.exports = User
