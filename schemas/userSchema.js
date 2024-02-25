@@ -35,4 +35,5 @@ const userSchema = new Schema(
 userSchema.index({ email: 1 });
 
 const User = mongoose.model('userSchema', userSchema)
+
 module.exports = User
