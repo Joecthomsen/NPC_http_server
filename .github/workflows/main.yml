@@ -43,6 +43,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_USER_PASSWORD }}
           script: |
-            docker-compose down 
-            docker-compose pull rest_server
-            docker-compose up -d
+            docker-compose -f docker-compose-remote.yml down 
+            docker-compose -f docker-compose-remote.yml pull rest_server
+            docker-compose -f docker-compose-remote.yml up -d
