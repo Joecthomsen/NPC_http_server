@@ -10,6 +10,7 @@ const { connect } = require("mongoose");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var controleGearRouter = require("./routes/controleGearRoutes");
+const verify_middleware = require("./service/verify_token");
 
 var app = express();
 
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/verify", verify_middleware.verifyToken);
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
