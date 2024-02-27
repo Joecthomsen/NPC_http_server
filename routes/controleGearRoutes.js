@@ -57,36 +57,46 @@ router.post(
   async (req, res, next) => {
     try {
       // Extracting required property
-      const { manufactoringID } = req.body;
+      const { manufactoringID, email } = req.body;
 
-      if (!manufactoringID) {
-        return res.status(400).json({ error: "Manufacturing ID is required" });
+      if (!manufactoringID || !email) {
+        return res
+          .status(400)
+          .json({ error: "Manufacturing ID and email is required" });
+      }
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ error: "User with email not found" });
       }
 
-      const controleGear = await ControleGear.findOne({ manufactoringID });
-      if (!controleGear) {
-        return res.status(404).json({ error: "ControleGear not found" });
+      if (user.controleGear.includes(manufactoringID)) {
+        const controleGear = await ControleGear.findOne({ manufactoringID });
+        if (!controleGear) {
+          return res.status(404).json({ error: "ControleGear not found" });
+        }
+
+        const new_data_instance = new DataInstance({});
+
+        // Assigning other properties from req.body if they exist
+        Object.assign(new_data_instance, req.body);
+        console.log(new_data_instance);
+
+        // Save the new ControleGear instance to the database
+        const savedControleGear = await new_data_instance.save();
+        if (!savedControleGear) {
+          return res.status(400).json({ error: "DataInstance not created" });
+        }
+
+        controleGear.dataInstances.push(new_data_instance);
+        controleGear.save();
+        if (!controleGear) {
+          return res.status(400).json({ error: "ControleGear not updated" });
+        }
+
+        res.status(201).json(savedControleGear); // Respond with the saved ControleGear object
+      } else {
+        return res.status(403).json({ error: "Unauthorized" });
       }
-
-      const new_data_instance = new DataInstance({});
-
-      // Assigning other properties from req.body if they exist
-      Object.assign(new_data_instance, req.body);
-      console.log(new_data_instance);
-
-      // Save the new ControleGear instance to the database
-      const savedControleGear = await new_data_instance.save();
-      if (!savedControleGear) {
-        return res.status(400).json({ error: "DataInstance not created" });
-      }
-
-      controleGear.dataInstances.push(new_data_instance);
-      controleGear.save();
-      if (!controleGear) {
-        return res.status(400).json({ error: "ControleGear not updated" });
-      }
-
-      res.status(201).json(savedControleGear); // Respond with the saved ControleGear object
     } catch (error) {
       console.error("Error saving ControleGear:", error);
       res
