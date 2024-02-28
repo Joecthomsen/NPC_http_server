@@ -8,48 +8,48 @@ const User = require("../schemas/userSchema");
 
 const verify_middleware = require("../service/verify_token");
 
-router.post(
-  "/new_controle_gear",
-  verify_middleware.verifyToken,
-  async (req, res, next) => {
-    try {
-      // Extracting required property
-      const { manufactoringID, email } = req.body;
-      if (!manufactoringID || !email) {
-        return res
-          .status(400)
-          .json({ error: "Manufacturing ID and Email is required" });
-      }
+// router.post(
+//   "/new_controle_gear",
+//   verify_middleware.verifyToken,
+//   async (req, res, next) => {
+//     try {
+//       // Extracting required property
+//       const { manufactoringID, email } = req.body;
+//       if (!manufactoringID || !email) {
+//         return res
+//           .status(400)
+//           .json({ error: "Manufacturing ID and Email is required" });
+//       }
 
-      console.log(manufactoringID, email);
+//       console.log(manufactoringID, email);
 
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res
-          .status(404)
-          .json({ error: 'User with email "' + email + '" not found' });
-      }
+//       const user = await User.findOne({ email });
+//       if (!user) {
+//         return res
+//           .status(404)
+//           .json({ error: 'User with email "' + email + '" not found' });
+//       }
 
-      const new_control_gear = await ControleGear.create({
-        manufactoringID,
-        email,
-      });
-      if (!new_control_gear) {
-        return res.status(400).json({ error: "ControleGear not created" });
-      }
+//       const new_control_gear = await ControleGear.create({
+//         manufactoringID,
+//         email,
+//       });
+//       if (!new_control_gear) {
+//         return res.status(400).json({ error: "ControleGear not created" });
+//       }
 
-      user.controleGear.push(manufactoringID);
-      user.save();
-      if (!user) {
-        return res.status(400).json({ error: "User not updated" });
-      }
+//       user.controleGear.push(manufactoringID);
+//       user.save();
+//       if (!user) {
+//         return res.status(400).json({ error: "User not updated" });
+//       }
 
-      res.status(200).json({ manufactoringID, email });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-);
+//       res.status(200).json({ manufactoringID, email });
+//     } catch (error) {
+//       res.status(500).json({ error: error.message });
+//     }
+//   }
+// );
 
 router.post(
   "/new_data_instance",
