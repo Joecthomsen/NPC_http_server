@@ -29,7 +29,7 @@ app.use("/verify", verify_middleware.verifyToken);
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-app.use("/controleGear", controleGearRouter);
+app.use("/controle_gear", controleGearRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -47,7 +47,7 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-connect("mongodb://npc_root:ImASillyPassword!@localhost:27017/NPC_Database", {
+connect("mongodb://npc_root:ImASillyPassword!@mongo:27017/NPC_Database", {
   authSource: "admin",
 })
   .then(() => {
