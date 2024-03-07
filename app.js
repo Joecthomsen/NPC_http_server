@@ -29,7 +29,7 @@ app.use("/verify", verify_middleware.verifyToken);
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-app.use("/controleGear", controleGearRouter);
+app.use("/controle_gear", controleGearRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

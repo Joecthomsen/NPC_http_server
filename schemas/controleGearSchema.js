@@ -1,29 +1,25 @@
-const mongoose = require('mongoose')
-const { Schema } = mongoose
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
 const controleGearSchema = new Schema(
-    {
-        manufactoringID: {
-            type: String,
-            required: true,
-            unique: true
-        },
-        email: {
-            type: String,
-            required: true
-        },
-        dataInstances: {
-            type: [Schema.Types.ObjectId],
-            default: []
-        },
+  {
+    manufactoringID: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    {
-        timestamps: true
-    }
-)
+    dataInstances: {
+      type: [Schema.Types.ObjectId],
+      default: [],
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 // Define index on manufactoringID field
 controleGearSchema.index({ manufactoringID: 1 });
 
-const ControleGear = mongoose.model('ControleGear', controleGearSchema)
-module.exports = ControleGear
+const ControleGear = mongoose.model("ControleGear", controleGearSchema);
+module.exports = ControleGear;
