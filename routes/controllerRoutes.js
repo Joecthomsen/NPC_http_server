@@ -142,25 +142,29 @@ router.get(
   }
 );
 
-router.get("/controle_gears/:popID", async (req, res, next) => {
-  try {
-    const { popID } = req.params;
-    let controleGearsToReturn = [];
-    const controller = await Controller.findOne({ popID });
+router.get(
+  "/controle_gears/:popID",
+  verify_middleware.verifyControllerToken,
+  async (req, res, next) => {
+    try {
+      const { popID } = req.params;
+      let controleGearsToReturn = [];
+      const controller = await Controller.findOne({ popID });
 
-    if (!controller) {
-      return res
-        .status(404)
-        .json({ error: "Controller with popID " + popID + " not found" });
+      if (!controller) {
+        return res
+          .status(404)
+          .json({ error: "Controller with popID " + popID + " not found" });
+      }
+
+      console.log(controller.controleGears);
+
+      res.status(200).json({ controleGears: controller.controleGears });
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({ error: error.message });
     }
-
-    console.log(controller.controleGears);
-
-    res.status(200).json({ controleGears: controller.controleGears });
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: error.message });
   }
-});
+);
 
 module.exports = router;
