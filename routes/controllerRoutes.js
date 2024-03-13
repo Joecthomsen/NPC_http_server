@@ -11,12 +11,17 @@ const verify_middleware = require("../service/verify_token");
 
 router.post(
   "/add_control_gear",
-  verify_middleware.verifyToken,
+  verify_middleware.verifyControllerToken,
   async (req, res, next) => {
     try {
       // Extracting required property
-      const { manufactoringID, popID } = req.body;
-      if (!manufactoringID || !popID) {
+      const { manufactoringID } = req.body;
+      const { popID } = req.headers;
+
+      console.log(manufactoringID);
+      console.log(popID);
+
+      if (!manufactoringID) {
         return res
           .status(400)
           .json({ error: "Manufacturing ID, Email and popID are required" });
@@ -53,21 +58,19 @@ router.post(
 
 router.post(
   "/new_data_instance",
-  verify_middleware.verifyToken,
+  verify_middleware.verifyControllerToken,
   async (req, res, next) => {
     try {
       // Extracting required property
-      const { manufactoringID, popID } = req.body;
+      const { manufactoringID } = req.body;
+
+      const { popID } = req.headers;
 
       if (!manufactoringID || !popID) {
         return res
           .status(400)
           .json({ error: "Manufacturing ID and popID is required" });
       }
-      // const user = await User.findOne({ email });
-      // if (!user) {
-      //   return res.status(404).json({ error: "User with email not found" });
-      // }
 
       const controller = await Controller.findOne({ popID });
       if (!controller) {
@@ -75,6 +78,8 @@ router.post(
           .status(404)
           .json({ error: 'Controller with popID "' + popID + '" not found' });
       }
+
+      console.log("Controller: ", controller);
 
       if (controller.controleGears.includes(manufactoringID)) {
         const controleGear = await ControleGear.findOne({ manufactoringID });
@@ -124,7 +129,7 @@ router.get("/all", async (req, res, next) => {
 
 router.get(
   "/:manufactoringID",
-  verify_middleware.verifyToken,
+  verify_middleware.verifyUserToken,
   async (req, res, next) => {
     console.log(req.params.manufactoringID);
     try {
