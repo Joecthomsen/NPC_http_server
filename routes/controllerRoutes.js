@@ -72,6 +72,8 @@ router.post(
           .json({ error: "Manufacturing ID and popID is required" });
       }
 
+      console.log("req.body: ", req.body);
+
       const controller = await Controller.findOne({ popID });
       if (!controller) {
         return res
@@ -91,7 +93,7 @@ router.post(
 
         // Assigning other properties from req.body if they exist
         Object.assign(new_data_instance, req.body);
-        console.log(new_data_instance);
+        console.log("New data instance: ", new_data_instance);
 
         // Save the new ControleGear instance to the database
         const savedControleGear = await new_data_instance.save();
@@ -162,6 +164,31 @@ router.get(
       res.status(200).json({ controleGears: controller.controleGears });
     } catch (error) {
       console.error(error);
+      res.status(400).json({ error: error.message });
+    }
+  }
+);
+
+router.get(
+  "/diagnostics/:manufactoringID",
+  verify_middleware.verifyControllerToken,
+  async (req, res, next) => {
+    try {
+      const { manufactoringID } = req.params;
+      const { popID } = req.headers;
+      const controller = await Controller.findOne({ popID });
+      if (!controller) {
+        return res
+          .status(404)
+          .json({ error: 'Controller with popID "' + popID + '" not found' });
+      }
+
+      const controleGear = await ControleGear.findOne({ manufactoringID });
+      const latestDataInstance = await DataInstance.findById(
+        controleGear.dataInstances[controleGear.dataInstances.length - 1]
+      );
+      return res.status(200).json(latestDataInstance);
+    } catch (error) {
       res.status(400).json({ error: error.message });
     }
   }
