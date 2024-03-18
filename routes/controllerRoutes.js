@@ -171,22 +171,16 @@ router.get(
 
 router.get(
   "/diagnostics/:manufactoringID",
-  verify_middleware.verifyControllerToken,
+  verify_middleware.verifyUserToken,
   async (req, res, next) => {
     try {
       const { manufactoringID } = req.params;
-      const { popID } = req.headers;
-      const controller = await Controller.findOne({ popID });
-      if (!controller) {
-        return res
-          .status(404)
-          .json({ error: 'Controller with popID "' + popID + '" not found' });
-      }
-
       const controleGear = await ControleGear.findOne({ manufactoringID });
       const latestDataInstance = await DataInstance.findById(
         controleGear.dataInstances[controleGear.dataInstances.length - 1]
       );
+      console.log(latestDataInstance);
+
       return res.status(200).json(latestDataInstance);
     } catch (error) {
       res.status(400).json({ error: error.message });
