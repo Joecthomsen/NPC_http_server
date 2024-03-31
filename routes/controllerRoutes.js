@@ -99,24 +99,61 @@ router.post(
         if (controleGear.dataInstances.length == 0 && req.body.operating_time) {
           console.log("First data instance created");
           controleGear.operatingTimeWhenCreated = req.body.operating_time; //If first time data instance is created, assign operating time
+
+          controleGear.expectedTimeToLiveHours =
+            50000 - req.body.operating_time / 3600;
+
           controleGear.expectedLifeTimePercent =
-            (1 - controleGear.operatingTimeWhenCreated / 3600 / 50000) * 100;
+            (controleGear.expectedTimeToLiveHours / 50000) * 100;
 
           console.log(
-            "Exopected lifetime: ",
+            "Exopected lifetime Percentage: ",
             controleGear.expectedLifeTimePercent
+          );
+
+          console.log(
+            "Expected lifetime hours: ",
+            controleGear.expectedTimeToLiveHours
           );
         } else {
           console.log("Data instance created");
-          controleGear.operatingTimeWhenCreated = req.body.operating_time; //If first time data instance is created, assign operating time
-          controleGear.expectedLifeTimePercent =
-            controleGear.expectedLifeTimePercent -
-            (controleGear.expectedLifeTimePercent -
-              (1 - controleGear.operatingTimeWhenCreated / 3600 / 50000) * 100);
+          //controleGear.operatingTimeWhenCreated = req.body.operating_time; //If first time data instance is created, assign operating time
+
+          const lastDataInstance = await DataInstance.findById(
+            controleGear.dataInstances[controleGear.dataInstances.length - 1]
+          );
+
+          const lastOperatingTime = lastDataInstance.operating_time;
+
+          const hoursSinceLastDataInstance =
+            (req.body.operating_time - lastOperatingTime) / 3600;
+
+          const timeDifferencePercentage =
+            hoursSinceLastDataInstance / req.body.operating_time;
+
+          console.log("Time difference percentage: ", timeDifferencePercentage);
 
           console.log(
-            "Exopected lifetime: ",
+            "Hours since last data instance: ",
+            hoursSinceLastDataInstance
+          );
+
+          controleGear.expectedTimeToLiveHours =
+            controleGear.expectedTimeToLiveHours -
+            (hoursSinceLastDataInstance *
+              calculateExpectedLifeTime(req.body.temperature)) /
+              100000;
+
+          controleGear.expectedLifeTimePercent =
+            (controleGear.expectedTimeToLiveHours / 50000) * 100;
+
+          console.log(
+            "Exopected lifetime percentage: ",
             controleGear.expectedLifeTimePercent
+          );
+          console.log(
+            "Expected lifetime hours: ",
+            controleGear.expectedTimeToLiveHours
           );
         }
 

@@ -16,6 +16,10 @@ const controleGearSchema = new Schema(
       type: Number,
       required: false,
     },
+    expectedTimeToLiveHours: {
+      type: Number,
+      required: false,
+    },
     expectedLifeTimePercent: {
       type: Number,
       required: false,
