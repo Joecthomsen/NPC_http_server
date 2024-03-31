@@ -12,6 +12,14 @@ const controleGearSchema = new Schema(
       type: [Schema.Types.ObjectId],
       default: [],
     },
+    operatingTimeWhenCreated: {
+      type: Number,
+      required: false,
+    },
+    expectedLifeTimePercent: {
+      type: Number,
+      required: false,
+    },
   },
   {
     timestamps: true,

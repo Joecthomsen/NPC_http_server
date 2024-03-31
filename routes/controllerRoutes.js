@@ -9,6 +9,12 @@ const User = require("../schemas/userSchema");
 
 const verify_middleware = require("../service/verify_token");
 
+const calculateExpectedLifeTime = (temperature) => {
+  //const operatingTimeHours = operatingTime / 3600;
+
+  return -526.315789474 * temperature + 94736.84210526;
+};
+
 router.post(
   "/add_control_gear",
   verify_middleware.verifyControllerToken,
@@ -85,8 +91,33 @@ router.post(
 
       if (controller.controleGears.includes(manufactoringID)) {
         const controleGear = await ControleGear.findOne({ manufactoringID });
+
         if (!controleGear) {
           return res.status(404).json({ error: "ControleGear not found" });
+        }
+
+        if (controleGear.dataInstances.length == 0 && req.body.operating_time) {
+          console.log("First data instance created");
+          controleGear.operatingTimeWhenCreated = req.body.operating_time; //If first time data instance is created, assign operating time
+          controleGear.expectedLifeTimePercent =
+            (1 - controleGear.operatingTimeWhenCreated / 3600 / 50000) * 100;
+
+          console.log(
+            "Exopected lifetime: ",
+            controleGear.expectedLifeTimePercent
+          );
+        } else {
+          console.log("Data instance created");
+          controleGear.operatingTimeWhenCreated = req.body.operating_time; //If first time data instance is created, assign operating time
+          controleGear.expectedLifeTimePercent =
+            controleGear.expectedLifeTimePercent -
+            (controleGear.expectedLifeTimePercent -
+              (1 - controleGear.operatingTimeWhenCreated / 3600 / 50000) * 100);
+
+          console.log(
+            "Exopected lifetime: ",
+            controleGear.expectedLifeTimePercent
+          );
         }
 
         const new_data_instance = new DataInstance({});
@@ -100,6 +131,10 @@ router.post(
         if (!savedControleGear) {
           return res.status(400).json({ error: "DataInstance not created" });
         }
+
+        // Calculate the expected lifetime of the ControleGear
+
+        console.log("Expected lifetime: ");
 
         controleGear.dataInstances.push(new_data_instance);
         controleGear.save();
