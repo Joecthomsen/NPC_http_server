@@ -251,9 +251,28 @@ router.get(
       const latestDataInstance = await DataInstance.findById(
         controleGear.dataInstances[controleGear.dataInstances.length - 1]
       );
-      console.log(latestDataInstance);
 
-      return res.status(200).json(latestDataInstance);
+      // Convert Mongoose document to a plain JavaScript object
+      const latestDataInstanceObj = latestDataInstance.toObject();
+
+      // Add expectedTimeToLiveHours and expectedLifeTimePercent properties
+      latestDataInstanceObj.expectedTimeToLiveHours =
+        controleGear.expectedTimeToLiveHours;
+      latestDataInstanceObj.expectedLifeTimePercent =
+        controleGear.expectedLifeTimePercent;
+
+      console.log("LAtest Data Instance: ", latestDataInstanceObj);
+
+      console.log(
+        "expected lifetime percentage: ",
+        controleGear.expectedLifeTimePercent
+      );
+      console.log(
+        "expected lifetime hours: ",
+        controleGear.expectedTimeToLiveHours
+      );
+
+      return res.status(200).json(latestDataInstanceObj);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
