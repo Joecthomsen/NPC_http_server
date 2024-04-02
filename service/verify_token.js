@@ -12,6 +12,7 @@ const REFRESH_TOKEN_KEY_CONTROLLER =
   "MegaSecretKeyRefreshTokenKeyController"; //TODO Make .env file
 
 exports.verifyUserToken = function (req, res, next) {
+  console.log("TEST");
   const token =
     req.body.token ||
     req.query.token ||
@@ -26,7 +27,7 @@ exports.verifyUserToken = function (req, res, next) {
 
   try {
     const decoded = jwt.verify(token, ACCESS_TOKEN_KEY_USER);
-    req.headers["manufactoringID"] = decoded.manufactoringID;
+    req.headers["email"] = decoded.email;
   } catch (e) {
     //return res.redirect("/http://65.108.92.248/"); //implement redirect to refresh token
     return res.status(401).json({ Error: "Invalid Token" });
