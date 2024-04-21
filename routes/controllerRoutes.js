@@ -142,7 +142,7 @@ router.post(
             controleGear.expectedTimeToLiveHours -
             (hoursSinceLastDataInstance *
               calculateExpectedLifeTime(req.body.temperature)) /
-              100000;
+              50000;
 
           controleGear.expectedLifeTimePercent =
             (controleGear.expectedTimeToLiveHours / 50000) * 100;
